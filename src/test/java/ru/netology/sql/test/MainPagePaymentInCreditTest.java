@@ -38,6 +38,9 @@ public class MainPagePaymentInCreditTest {
         mainPage.refillForm(approvedCardInfo);
         mainPage.submitForm();
         mainPage.verifyApprovedNotificationShown();
+
+        var createdCreditRequest = SQLHelper.getLastCreditRequest();
+        Assertions.assertEquals(createdCreditRequest.getStatus(), "APPROVED");
     }
 
     @Test
@@ -47,8 +50,10 @@ public class MainPagePaymentInCreditTest {
         mainPage.refillForm(declinedCardInfo);
         mainPage.submitForm();
         mainPage.verifyErrorNotificationShown();
-    }
 
+        var createdCreditRequest = SQLHelper.getLastCreditRequest();
+        Assertions.assertEquals(createdCreditRequest.getStatus(), "DECLINED");
+    }
 
 
     @Test
@@ -276,56 +281,7 @@ public class MainPagePaymentInCreditTest {
         mainPage.verifySubmitNotStarted();
     }
 
-    @Test
-    @DisplayName("form should be submitted with valid month 01")
-    void formShouldBeSubmittedWithValidMonth01() {
-        var approvedCardInfo = DataHelper.getApprovedCardInfo();
 
-        var changedCardInfo = new DataHelper.CardInfo(
-                approvedCardInfo.getCardNumber(),
-                "01",
-                approvedCardInfo.getYear(),
-                approvedCardInfo.getOwner(),
-                approvedCardInfo.getCvc()
-        );
-        mainPage.refillForm(changedCardInfo);
-        mainPage.submitForm();
-        mainPage.verifySubmitStarted();
-    }
-
-    @Test
-    @DisplayName("form should be submitted with valid month 11")
-    void formShouldBeSubmittedWithValidMonth11() {
-        var approvedCardInfo = DataHelper.getApprovedCardInfo();
-
-        var changedCardInfo = new DataHelper.CardInfo(
-                approvedCardInfo.getCardNumber(),
-                "11",
-                approvedCardInfo.getYear(),
-                approvedCardInfo.getOwner(),
-                approvedCardInfo.getCvc()
-        );
-        mainPage.refillForm(changedCardInfo);
-        mainPage.submitForm();
-        mainPage.verifySubmitStarted();
-    }
-
-    @Test
-    @DisplayName("form should be submitted with valid month 12")
-    void formShouldBeSubmittedWithValidMonth12() {
-        var approvedCardInfo = DataHelper.getApprovedCardInfo();
-
-        var changedCardInfo = new DataHelper.CardInfo(
-                approvedCardInfo.getCardNumber(),
-                "12",
-                approvedCardInfo.getYear(),
-                approvedCardInfo.getOwner(),
-                approvedCardInfo.getCvc()
-        );
-        mainPage.refillForm(changedCardInfo);
-        mainPage.submitForm();
-        mainPage.verifySubmitStarted();
-    }
 
     @Test
     @DisplayName("form should not be submitted with empty year")
@@ -399,6 +355,36 @@ public class MainPagePaymentInCreditTest {
         mainPage.verifySubmitNotStarted();
     }
 
+
+    @Test
+    @DisplayName("form should be submitted with next month and current year")
+    void formShouldBeSubmittedWithNextMonthAndCurrentYear() {
+        var approvedCardInfo = DataHelper.getApprovedCardInfo();
+
+        var now = new Date();
+
+        var monthIndex = now.getMonth();
+        var year = now.getYear() + 1900;
+        var yearString = String.valueOf(year);
+
+        var trimmedYear = yearString.length() > 2 ? yearString.substring(yearString.length() - 2) : yearString;
+
+        var month = monthIndex + 2;
+        var monthStringFormatted = String.format("%02d", month);
+
+        var changedCardInfo = new DataHelper.CardInfo(
+                approvedCardInfo.getCardNumber(),
+                monthStringFormatted,
+                trimmedYear,
+                approvedCardInfo.getOwner(),
+                approvedCardInfo.getCvc()
+        );
+
+        mainPage.refillForm(changedCardInfo);
+        mainPage.submitForm();
+        mainPage.verifySubmitStarted();
+    }
+
     @Test
     @DisplayName("form should be submitted with current month and year")
     void formShouldBeSubmittedWithCurrentMonthAndYear() {
@@ -457,7 +443,8 @@ public class MainPagePaymentInCreditTest {
         mainPage.verifySubmitNotStarted();
     }
 
-    @Test // БАГ
+
+    @Test
     @DisplayName("form should be submitted for card with long expiration")
     void formShouldBeSubmittedForCardWithLongExpiration() {
         var approvedCardInfo = DataHelper.getApprovedCardInfo();
@@ -533,7 +520,7 @@ public class MainPagePaymentInCreditTest {
         mainPage.verifySubmitNotStarted();
     }
 
-    @Test //баг
+    @Test
     @DisplayName("form should not be submitted with number owner")
     void formShouldNotBeSubmittedWithENumberOwner() {
         var approvedCardInfo = DataHelper.getApprovedCardInfo();
@@ -551,7 +538,7 @@ public class MainPagePaymentInCreditTest {
         mainPage.verifySubmitNotStarted();
     }
 
-    @Test //баг
+    @Test
     @DisplayName("form should not be submitted with symbol owner")
     void formShouldNotBeSubmittedWithSymbolOwner() {
         var approvedCardInfo = DataHelper.getApprovedCardInfo();
@@ -569,7 +556,7 @@ public class MainPagePaymentInCreditTest {
         mainPage.verifySubmitNotStarted();
     }
 
-    @Test  //баг
+    @Test
     @DisplayName("form should not be submitted with сyrillic owner")
     void formShouldNotBeSubmittedWithCyrillicOwner() {
         var approvedCardInfo = DataHelper.getApprovedCardInfo();
@@ -587,7 +574,7 @@ public class MainPagePaymentInCreditTest {
         mainPage.verifySubmitNotStarted();
     }
 
-    @Test //баг
+    @Test
     @DisplayName("form should not be submitted without space owner")
     void formShouldNotBeSubmittedWithWithoutSpaceOwner() {
         var approvedCardInfo = DataHelper.getApprovedCardInfo();
@@ -605,7 +592,7 @@ public class MainPagePaymentInCreditTest {
         mainPage.verifySubmitNotStarted();
     }
 
-    @Test //баг
+    @Test
     @DisplayName("form should not be submitted with hyphen owner")
     void formShouldNotBeSubmittedWithWithHyphenOwner() {
         var approvedCardInfo = DataHelper.getApprovedCardInfo();
@@ -763,7 +750,6 @@ public class MainPagePaymentInCreditTest {
     }
 
 
-
     @Test
     @DisplayName("order should be created after card submitted")
     void orderShouldBeCreatedAfterCardSubmitted() {
@@ -782,26 +768,6 @@ public class MainPagePaymentInCreditTest {
         var createdCreditRequest = SQLHelper.getLastCreditRequest();
 
         Assertions.assertNotNull(createdCreditRequest);
-    }
-
-    @Test
-    @DisplayName("credit request should have correct status after approved card submitted")
-    void creditRequestShouldHaveCorrectStatusAfterApprovedCardSubmitted() {
-        clearDatabaseAndSubmitFormWithApprovedCard();
-
-        var createdCreditRequest = SQLHelper.getLastCreditRequest();
-
-        Assertions.assertEquals(createdCreditRequest.getStatus(), "APPROVED");
-    }
-
-    @Test
-    @DisplayName("credit request should have correct status after declined card submitted")
-    void creditRequestShouldHaveCorrectStatusAfterDeclinedCardSubmitted() {
-        clearDatabaseAndSubmitFormWithDeclinedCard();
-
-        var createdCreditRequest = SQLHelper.getLastCreditRequest();
-
-        Assertions.assertEquals(createdCreditRequest.getStatus(), "DECLINED");
     }
 
     @Test
