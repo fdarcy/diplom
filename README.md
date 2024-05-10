@@ -19,6 +19,6 @@
 4. Запустить приложение (java "-Dspring.datasource.url=jdbc:postgresql://localhost:5432/db" -jar artifacts/aqa-shop.jar)
 5. Запустить автотесты (./gradlew clean test "-Ddb.url=jdbc:postgresql://localhost:5432/db")
 
-[План] (docs/Plan.md)
-[Отчет] (docs/Report.md)
-[Summary] (docs/Summary.md)
+[План](docs/Plan.md)  
+[Отчет](docs/Report.md)  
+[Summary](docs/Summary.md)  
