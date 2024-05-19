@@ -58,6 +58,7 @@ public class MainPagePaymentTest {
     void formShouldNotBeSubmittedWithEmptyCardNumber() {
         mainPage.fillForm(DataHelper.getCardWithEmptyCardNumber());
         mainPage.submitForm();
+        mainPage.verifyCardNumberHasValidation();
         mainPage.verifySubmitNotStarted();
     }
 
@@ -66,6 +67,7 @@ public class MainPagePaymentTest {
     void formShouldNotBeSubmittedWithZeroCardNumber() {
         mainPage.fillForm(DataHelper.getCardWithZerosCardNumber());
         mainPage.submitForm();
+        mainPage.verifyCardNumberHasValidation();
         mainPage.verifySubmitNotStarted();
     }
 
@@ -74,6 +76,7 @@ public class MainPagePaymentTest {
     void formShouldNotBeSubmittedWithLetterCardNumber() {
         mainPage.fillForm(DataHelper.getCardWithLettersCardNumber());
         mainPage.submitForm();
+        mainPage.verifyCardNumberHasValidation();
         mainPage.verifySubmitNotStarted();
     }
 
@@ -82,6 +85,7 @@ public class MainPagePaymentTest {
     void formShouldNotBeSubmittedWithSymbolCardNumber() {
         mainPage.fillForm(DataHelper.getCardWithSymbolsCardNumber());
         mainPage.submitForm();
+        mainPage.verifyCardNumberHasValidation();
         mainPage.verifySubmitNotStarted();
     }
 
@@ -90,6 +94,7 @@ public class MainPagePaymentTest {
     void formShouldNotBeSubmittedWithFewerNumbersCardNumber() {
         mainPage.fillForm(DataHelper.getCardWithFewerCardNumber());
         mainPage.submitForm();
+        mainPage.verifyCardNumberHasValidation();
         mainPage.verifySubmitNotStarted();
     }
 
@@ -98,6 +103,7 @@ public class MainPagePaymentTest {
     void formShouldNotBeSubmittedWithOneNumbersCardNumber() {
         mainPage.fillForm(DataHelper.getCardWithOneNumberCardNumber());
         mainPage.submitForm();
+        mainPage.verifyCardNumberHasValidation();
         mainPage.verifySubmitNotStarted();
     }
 
@@ -106,6 +112,7 @@ public class MainPagePaymentTest {
     void formShouldNotBeSubmittedWithTwoNumbersCardNumber() {
         mainPage.fillForm(DataHelper.getCardWithTwoNumberCardNumber());
         mainPage.submitForm();
+        mainPage.verifyCardNumberHasValidation();
         mainPage.verifySubmitNotStarted();
     }
 
@@ -114,6 +121,7 @@ public class MainPagePaymentTest {
     void formShouldNotBeSubmittedWithEmptyMonth() {
         mainPage.fillForm(DataHelper.getCardWithEmptyMonth());
         mainPage.submitForm();
+        mainPage.verifyMonthHasValidation();
         mainPage.verifySubmitNotStarted();
     }
 
@@ -122,6 +130,7 @@ public class MainPagePaymentTest {
     void formShouldNotBeSubmittedWithLetterMonth() {
         mainPage.fillForm(DataHelper.getCardWithLetterMonth());
         mainPage.submitForm();
+        mainPage.verifyMonthHasValidation();
         mainPage.verifySubmitNotStarted();
     }
 
@@ -130,6 +139,7 @@ public class MainPagePaymentTest {
     void formShouldNotBeSubmittedWithSymbolMonth() {
         mainPage.fillForm(DataHelper.getCardWithSymbolMonth());
         mainPage.submitForm();
+        mainPage.verifyMonthHasValidation();
         mainPage.verifySubmitNotStarted();
     }
 
@@ -138,6 +148,7 @@ public class MainPagePaymentTest {
     void formShouldNotBeSubmittedWithZeroMonth() {
         mainPage.fillForm(DataHelper.getCardWithTwoZeroMonth());
         mainPage.submitForm();
+        mainPage.verifyMonthHasValidation();
         mainPage.verifySubmitNotStarted();
     }
 
@@ -146,6 +157,7 @@ public class MainPagePaymentTest {
     void formShouldNotBeSubmittedWithInvalidMonth() {
         mainPage.fillForm(DataHelper.getCardWithInvalidMonth());
         mainPage.submitForm();
+        mainPage.verifyMonthHasValidation();
         mainPage.verifySubmitNotStarted();
     }
 
@@ -154,6 +166,7 @@ public class MainPagePaymentTest {
     void formShouldNotBeSubmittedWithEmptyYear() {
         mainPage.fillForm(DataHelper.getCardWithEmptyYear());
         mainPage.submitForm();
+        mainPage.verifyYearHasValidation();
         mainPage.verifySubmitNotStarted();
     }
 
@@ -162,6 +175,7 @@ public class MainPagePaymentTest {
     void formShouldNotBeSubmittedWithLettersInYear() {
         mainPage.fillForm(DataHelper.getCardWithLettersYear());
         mainPage.submitForm();
+        mainPage.verifyYearHasValidation();
         mainPage.verifySubmitNotStarted();
     }
 
@@ -170,6 +184,7 @@ public class MainPagePaymentTest {
     void formShouldNotBeSubmittedWithSymbolInYear() {
         mainPage.fillForm(DataHelper.getCardWithSymbolsYear());
         mainPage.submitForm();
+        mainPage.verifyYearHasValidation();
         mainPage.verifySubmitNotStarted();
     }
 
@@ -178,6 +193,7 @@ public class MainPagePaymentTest {
     void formShouldNotBeSubmittedWithOldYearInYear() {
         mainPage.fillForm(DataHelper.getCardWithOldYear());
         mainPage.submitForm();
+        mainPage.verifyYearHasValidation();
         mainPage.verifySubmitNotStarted();
     }
 
@@ -187,6 +203,9 @@ public class MainPagePaymentTest {
         mainPage.fillForm(DataHelper.getCardWithNextMonth());
         mainPage.submitForm();
         mainPage.verifySubmitStarted();
+        mainPage.verifyApprovedNotificationShown();
+        var createdPayment = SQLHelper.getLastPayment();
+        Assertions.assertEquals(createdPayment.getStatus(), "APPROVED");
     }
 
     @Test
@@ -195,6 +214,9 @@ public class MainPagePaymentTest {
         mainPage.fillForm(DataHelper.getCardWithCurrentMonthAndYear());
         mainPage.submitForm();
         mainPage.verifySubmitStarted();
+        mainPage.verifyApprovedNotificationShown();
+        var createdPayment = SQLHelper.getLastPayment();
+        Assertions.assertEquals(createdPayment.getStatus(), "APPROVED");
     }
 
     @Test
@@ -202,6 +224,7 @@ public class MainPagePaymentTest {
     void formShouldNotBeSubmittedWithPastMonthAndCurrentYear() {
         mainPage.fillForm(DataHelper.getCardWithPastMonth());
         mainPage.submitForm();
+        mainPage.verifyMonthHasValidation();
         mainPage.verifySubmitNotStarted();
     }
 
@@ -211,6 +234,9 @@ public class MainPagePaymentTest {
         mainPage.fillForm(DataHelper.getCardWithLongExpiration());
         mainPage.submitForm();
         mainPage.verifySubmitStarted();
+        mainPage.verifyApprovedNotificationShown();
+        var createdPayment = SQLHelper.getLastPayment();
+        Assertions.assertEquals(createdPayment.getStatus(), "APPROVED");
     }
 
     @Test
@@ -218,6 +244,7 @@ public class MainPagePaymentTest {
     void formShouldBeSubmittedForCardThatExpiresInPast() {
         mainPage.fillForm(DataHelper.getExpiredCard());
         mainPage.submitForm();
+        mainPage.verifyYearHasValidation();
         mainPage.verifySubmitNotStarted();
     }
 
@@ -226,6 +253,7 @@ public class MainPagePaymentTest {
     void formShouldNotBeSubmittedWithEmptyOwner() {
         mainPage.fillForm(DataHelper.getCardWithEmptyOwner());
         mainPage.submitForm();
+        mainPage.verifyOwnerHasValidation();
         mainPage.verifySubmitNotStarted();
     }
 
@@ -234,6 +262,7 @@ public class MainPagePaymentTest {
     void formShouldNotBeSubmittedWithNumberOwner() {
         mainPage.fillForm(DataHelper.getCardWithNumberOwner());
         mainPage.submitForm();
+        mainPage.verifyOwnerHasValidation();
         mainPage.verifySubmitNotStarted();
     }
 
@@ -242,6 +271,7 @@ public class MainPagePaymentTest {
     void formShouldNotBeSubmittedWithSymbolOwner() {
         mainPage.fillForm(DataHelper.getCardWithSymbolOwner());
         mainPage.submitForm();
+        mainPage.verifyOwnerHasValidation();
         mainPage.verifySubmitNotStarted();
     }
 
@@ -250,6 +280,7 @@ public class MainPagePaymentTest {
     void formShouldNotBeSubmittedWithCyrillicOwner() {
         mainPage.fillForm(DataHelper.getCardWithCyrillicOwner());
         mainPage.submitForm();
+        mainPage.verifyOwnerHasValidation();
         mainPage.verifySubmitNotStarted();
     }
 
@@ -258,6 +289,7 @@ public class MainPagePaymentTest {
     void formShouldNotBeSubmittedWithWithoutSpaceOwner() {
         mainPage.fillForm(DataHelper.getCardWithoutSpaceOwner());
         mainPage.submitForm();
+        mainPage.verifyOwnerHasValidation();
         mainPage.verifySubmitNotStarted();
     }
 
@@ -266,6 +298,7 @@ public class MainPagePaymentTest {
     void formShouldNotBeSubmittedWithWithHyphenOwner() {
         mainPage.fillForm(DataHelper.getCardWithHyphenOwner());
         mainPage.submitForm();
+        mainPage.verifyOwnerHasValidation();
         mainPage.verifySubmitNotStarted();
     }
 
@@ -274,6 +307,7 @@ public class MainPagePaymentTest {
     void formShouldNotBeSubmittedWithWithOneSymbolOwner() {
         mainPage.fillForm(DataHelper.getCardWithOneSymbolOwner());
         mainPage.submitForm();
+        mainPage.verifyOwnerHasValidation();
         mainPage.verifySubmitNotStarted();
     }
 
@@ -282,6 +316,7 @@ public class MainPagePaymentTest {
     void formShouldNotBeSubmittedWithWithTwoSymbolOwner() {
         mainPage.fillForm(DataHelper.getCardWithTwoSymbolOwner());
         mainPage.submitForm();
+        mainPage.verifyOwnerHasValidation();
         mainPage.verifySubmitNotStarted();
     }
 
@@ -290,6 +325,7 @@ public class MainPagePaymentTest {
     void formShouldNotBeSubmittedWithEmptyCvc() {
         mainPage.fillForm(DataHelper.getCardWithEmptyCvc());
         mainPage.submitForm();
+        mainPage.verifyCvcHasValidation();
         mainPage.verifySubmitNotStarted();
     }
 
@@ -298,6 +334,7 @@ public class MainPagePaymentTest {
     void formShouldNotBeSubmittedWithSymbolCvc() {
         mainPage.fillForm(DataHelper.getCardWithSymbolCvc());
         mainPage.submitForm();
+        mainPage.verifyCvcHasValidation();
         mainPage.verifySubmitNotStarted();
     }
 
@@ -306,6 +343,7 @@ public class MainPagePaymentTest {
     void formShouldNotBeSubmittedWithLetterCvc() {
         mainPage.fillForm(DataHelper.getCardWithLetterCvc());
         mainPage.submitForm();
+        mainPage.verifyCvcHasValidation();
         mainPage.verifySubmitNotStarted();
     }
 
@@ -314,6 +352,7 @@ public class MainPagePaymentTest {
     void formShouldNotBeSubmittedWithZeroCvc() {
         mainPage.fillForm(DataHelper.getCardWithZeroCvc());
         mainPage.submitForm();
+        mainPage.verifyCvcHasValidation();
         mainPage.verifySubmitNotStarted();
     }
 
@@ -322,6 +361,7 @@ public class MainPagePaymentTest {
     void formShouldNotBeSubmittedWithTwoNumbersCvc() {
         mainPage.fillForm(DataHelper.getCardWithTwoNumberCvc());
         mainPage.submitForm();
+        mainPage.verifyCvcHasValidation();
         mainPage.verifySubmitNotStarted();
     }
 
@@ -330,6 +370,7 @@ public class MainPagePaymentTest {
     void formShouldNotBeSubmittedWithOneNumbersCvc() {
         mainPage.fillForm(DataHelper.getCardWithOneNumberCvc());
         mainPage.submitForm();
+        mainPage.verifyCvcHasValidation();
         mainPage.verifySubmitNotStarted();
     }
 
